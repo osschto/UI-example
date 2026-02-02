@@ -1,10 +1,12 @@
 import flet as ft
 
-from pages.PageAddRequests import date_picker, page_add_requests, get_last_num
-from pages.PageEditRequests import page_edit_requests
 from db.db import create_db
-from utils.toast import set_page
+from pages.PageAddRequests import date_picker, get_last_num, page_add_requests
+from pages.PageAssignEmployees import get_data, page_assign
+from pages.PageEditRequests import page_edit_requests
 from utils.styles import navigation_selected_text_style, navigation_unselected_text_style
+from utils.toast import set_page
+
 
 async def main(page: ft.Page):
     page.title = "TASK"
@@ -26,6 +28,9 @@ async def main(page: ft.Page):
             page_content.content = page_add_requests
         elif navigation_menu.content.selected_index == 1:
             page_content.content = page_edit_requests
+        elif navigation_menu.content.selected_index == 2:
+            page_content.content = page_assign
+            get_data()
 
     page_content = ft.Container(
         content=page_add_requests

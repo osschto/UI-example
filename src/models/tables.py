@@ -13,3 +13,7 @@ class Request(SQLModel, table=True):
     client : str
     responsible : Optional[str] = None
     status : str = "awaiting"
+
+class Employee(SQLModel, table=True):
+    id : Optional[int] = Field(default=None, primary_key=True)
+    name : str
