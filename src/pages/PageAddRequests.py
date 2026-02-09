@@ -3,119 +3,123 @@ from sqlmodel import desc, select
 
 from db.db import get_session
 from models.tables import Request
+from utils.styles import (card_shadow_style, card_bgcolor, card_border_color,
+                          main_text_style, page_topic_style,
+                          default_border_color,
+                          add_data_btn_style)
 from utils.toast import succesfull_toast, warning_toast
-from utils.styles import main_text_style, page_topic_style, default_border_color, add_data_btn_style
 
-#-------------------------FUNCTIONS-------------------------#
-def open_date_picker(e):
-    date_picker.open = True
-
-def save_date(e):
-    if date_picker.value:
-        local_date = date_picker.value.astimezone()
-        date_field.value = local_date.strftime("%d.%m.%Y")
-        date_field.update()
-
-def update_page_controls():
-    # num_field.value = None
-    # date_field.value = None
-    # equipment_field.value = None
-    # type_field.value = None
-    # description_field.value = None
-    # client_field.value = None
-    # status_group.value = None
-    get_last_num()
-
-def get_last_num():
-    db = next(get_session())
-    last_num = db.exec(select(Request).order_by(Request.num.desc())).first()
-    
-    if last_num:
-        num_field.value = last_num.num + 1 
-    else:
-        num_field.value = 1
-
-def save_data(e):
-    db = next(get_session())
-    if not num_field.value:
-        warning_toast("Заполните все поля")
-    elif not date_field.value:
-        warning_toast("Заполните все поля")
-    elif not equipment_field.value:
-        warning_toast("Заполните все поля")
-    elif not type_field.value:
-        warning_toast("Заполните все поля")
-    elif not client_field.value:
-        warning_toast("Заполните все поля")
-    else:
-        request_db = Request(
-            num = num_field.value,
-            date = date_picker.value.date(),
-            equipment = equipment_field.value,
-            type = type_field.value,
-            description = description_field.value,
-            client = client_field.value,
-            status = status_group.value
+#==================================================#
+#====================FUNCTIONS=====================#
+#==================================================#
+def card(topic_icon, topic_text, control1, control2, control3, control4, control5, control6, control7, width, height, underline_width):
+    return ft.Container(
+        width=width,
+        height=height,
+        padding=ft.Padding(left=10, top=5, right=10, bottom=10),
+        bgcolor=card_bgcolor,        
+        border=ft.Border.all(1, card_border_color),
+        border_radius=15,
+        shadow=card_shadow_style,
+        content=ft.Column(
+            controls=[
+                ft.Row(
+                    [
+                        ft.Icon(icon=topic_icon, size=21),
+                        ft.Text(topic_text, style=main_text_style)
+                    ],
+                    margin=ft.Margin.only(left=5, bottom=-10),
+                    spacing=8,
+                    alignment=ft.CrossAxisAlignment.START
+                ),
+                ft.Container(bgcolor=ft.Colors.CYAN, width=len(topic_text)*underline_width, height=2, margin=ft.Margin.only(left=7)),
+                ft.Row(
+                    [
+                        control1,
+                        ft.Container(bgcolor=ft.Colors.CYAN, width=2, height=45),
+                        control2,
+                        ft.Container(bgcolor=ft.Colors.CYAN, width=2, height=45),
+                        control3
+                    ],
+                    alignment=ft.CrossAxisAlignment.CENTER
+                ),
+                ft.Row(
+                    [
+                        control4,
+                        ft.Container(bgcolor=ft.Colors.CYAN, width=2, height=45),
+                        control5
+                    ],
+                    alignment=ft.CrossAxisAlignment.CENTER                    
+                ),
+                ft.Row(
+                    [
+                        control6,
+                        ft.Container(bgcolor=ft.Colors.CYAN, width=2, height=45),
+                        control7
+                    ],
+                    alignment=ft.CrossAxisAlignment.CENTER                    
+                )
+            ],
+            alignment=ft.MainAxisAlignment.CENTER
         )
+    )
 
-        db.add(request_db)
-        db.commit()
+#==================================================#
+#=====================CONTROLS=====================#
+#==================================================#
+num_field = ft.TextField(label="№ заявки", text_style=main_text_style,
+                         border_color=default_border_color, border_radius=10,
+                         width=110,
+                         read_only=True)
 
-        succesfull_toast("Заявка успешно добавлена")
-        update_page_controls()
+date_field = ft.TextField(label="Дата", text_style=main_text_style,
+                          hint_text="ДД.ММ.ГГГГ", hint_style=main_text_style,
+                          width=150,
+                          border_color=default_border_color, border_radius=10)
 
-#-------------------------CONTROLS-------------------------#
-num_field = ft.TextField(label="Номер заказа", text_style=main_text_style,
-                         border_color=default_border_color, read_only=True, width=200)
+client_name_field = ft.TextField(label="Имя клиента", text_style=main_text_style,
+                          hint_text="Введите имя клиента", hint_style=main_text_style,
+                          width=250,
+                          border_color=default_border_color, border_radius=10)
 
-date_field = ft.TextField(label="Дата добавления", hint_text="ДД.ММ.ГГГГ",
-                          text_style=main_text_style, border_color=default_border_color,
-                          read_only=True, width=200, on_click=open_date_picker)
+equipment_field = ft.TextField(label="Оборудовние", text_style=main_text_style,
+                          hint_text="Например, телевизор", hint_style=main_text_style,
+                          width=250,
+                          border_color=default_border_color, border_radius=10)
 
-date_picker = ft.DatePicker(on_change=save_date)
+type_field = ft.TextField(label="Тип поломки", text_style=main_text_style,
+                          hint_text="Например, короткое замыкание", hint_style=main_text_style,
+                          width=250,
+                          border_color=default_border_color, border_radius=10)
 
-equipment_field = ft.TextField(label="Оборудование", hint_text="Например, телевизор",
-                               text_style=main_text_style, capitalization=ft.TextCapitalization.SENTENCES,
-                               border_color=default_border_color,
-                               width=265)
-
-type_field = ft.TextField(label="Тип неисправности", hint_text="Например, короткое замыкание",
-                          text_style=main_text_style, capitalization=ft.TextCapitalization.SENTENCES,
-                          border_color=default_border_color,
-                          width=265)
-
-description_field = ft.TextField(label="Описание проблемы", hint_text="Можно оставить это поле пустым",
-                                 text_style=main_text_style,
-                                 border_color=default_border_color, capitalization=ft.TextCapitalization.SENTENCES,
-                                 multiline=True, min_lines=3, max_lines=3,
-                                 width=540)
-
-client_field = ft.TextField(label="Клиент, сделавший заказ", hint_text="Введите имя клиента",
-                            text_style=main_text_style, capitalization=ft.TextCapitalization.SENTENCES,
-                            border_color=default_border_color,
-                            width=250)
+description_field = ft.TextField(label="Описание проблемы", text_style=main_text_style,
+                          hint_text="Можно оставить это поле пустым", hint_style=main_text_style,
+                          width=400, height=150,
+                          min_lines=3, max_lines=3, multiline=True,
+                          border_color=default_border_color, border_radius=10)
 
 status_group = ft.RadioGroup(
-    value="awaiting",
     content=ft.Column(
         spacing=0,
+        margin=ft.Margin.only(left=0, top=-50, right=0, bottom=0),
         controls=[
-            ft.Text("Статус заявки", margin=ft.Margin.only(left=15)),
-            ft.Container(bgcolor=ft.Colors.CYAN_ACCENT, width=120, height=1),
-            ft.Radio(value="awaiting", label="В ожидании",
-                     fill_color=ft.Colors.RED, label_style=main_text_style, hover_color=ft.Colors.TRANSPARENT),
-            ft.Radio(value="in work", label="В работе",
-                     fill_color=ft.Colors.YELLOW, label_style=main_text_style, hover_color=ft.Colors.TRANSPARENT),
-            ft.Radio(value="completed", label="Выполнено",
-                     fill_color=ft.Colors.GREEN, label_style=main_text_style, hover_color=ft.Colors.TRANSPARENT)
+            ft.Text("Статус заявки", style=main_text_style),
+            ft.Radio(label="В ожидании", label_style=main_text_style),
+            ft.Radio(label="В работе", label_style=main_text_style),
+            ft.Radio(label="Выполнено", label_style=main_text_style)
         ]
     )
 )
 
-add_data_btn = ft.Button("Добавить", style=add_data_btn_style,
-                         width=150, height=50, on_click=save_data)
+all_controls_card = card(ft.Icons.ALL_INBOX, "Добавление заявки",
+                         num_field, date_field, client_name_field,
+                         equipment_field, type_field,
+                         description_field, status_group,
+                         600, 325, 9.5)
 
-#-------------------------PAGE-------------------------#
+#==================================================#
+#=======================PAGE=======================#
+#==================================================#
 page_add_requests = ft.Column(
     margin=ft.Margin.only(top=15, left=35),
     controls = [
@@ -127,34 +131,7 @@ page_add_requests = ft.Column(
         ),
         ft.Row(
             [
-                num_field,
-                date_field
-            ],
-            alignment=ft.CrossAxisAlignment.CENTER
-        ),
-        ft.Row(
-            [
-                equipment_field,
-                type_field
-            ],
-            alignment=ft.CrossAxisAlignment.CENTER
-        ),
-        ft.Row(
-            [
-                description_field
-            ],
-            alignment=ft.CrossAxisAlignment.CENTER
-        ),
-        ft.Row(
-            [
-                client_field,
-                status_group
-            ],
-            alignment=ft.CrossAxisAlignment.CENTER
-        ),
-        ft.Row(
-            [
-                add_data_btn,
+                all_controls_card
             ],
             alignment=ft.CrossAxisAlignment.CENTER
         )
