@@ -2,18 +2,88 @@ import flet as ft
 from sqlmodel import select
 
 from db.db import get_session
-from models.tables import Request, Employee
-from utils.styles import default_border_style, default_text_style
+from models.tables import Employee, Request
+from utils.styles import (card_bgcolor, card_border_color, card_shadow_style,
+                          page_topic_style, main_text_style,
+                          default_border_color,
+                          assign_employee_btn_style)
+from utils.toast import succesfull_toast, warning_toast
 
+#==================================================#
+#====================FUNCTIONS=====================#
+#==================================================#
+def card(topic_icon, topic_text, control, width, height, underline_width):
+    return ft.Container(
+        width=width,
+        height=height,
+        padding=ft.Padding.only(left=10, top=10, right=10, bottom=10),
+        bgcolor=card_bgcolor,
+        border=ft.Border.all(1, card_border_color),
+        border_radius=15,
+        shadow=card_shadow_style,
+        content=ft.Column(
+            controls=[
+                ft.Row(
+                    [
+                        ft.Icon(icon=topic_icon, size=21),
+                        ft.Text(topic_text, style=main_text_style)
+                    ],
+                    margin=ft.Margin.only(left=5, bottom=-10),
+                    spacing=8,
+                    alignment=ft.CrossAxisAlignment.START
+                ),
+                ft.Container(bgcolor=ft.Colors.CYAN, width=len(topic_text)*underline_width, height=2, margin=ft.Margin.only(left=7)),
+                ft.Row(
+                    [
+                        control
+                    ],
+                    alignment=ft.CrossAxisAlignment.CENTER
+                )
+            ]
+        )
+    )
 
-def get_data():
+def card_with_divider(topic_icon, topic_text, control1, control2, width, height, underline_width):
+    return ft.Container(
+        width=width,
+        height=height,
+        padding=ft.Padding.only(left=10, top=10, right=10, bottom=10),
+        bgcolor=card_bgcolor,
+        border=ft.Border.all(1, card_border_color),
+        border_radius=15,
+        shadow=card_shadow_style,
+        content=ft.Column(
+            controls=[
+                ft.Row(
+                    [
+                        ft.Icon(icon=topic_icon, size=21),
+                        ft.Text(topic_text, style=main_text_style)
+                    ],
+                    margin=ft.Margin.only(left=5, bottom=-10),
+                    spacing=8,
+                    alignment=ft.CrossAxisAlignment.START
+                ),
+                ft.Container(bgcolor=ft.Colors.CYAN, width=len(topic_text)*underline_width, height=2, margin=ft.Margin.only(left=7)),
+                ft.Row(
+                    [
+                        control1,
+                        ft.Container(bgcolor=ft.Colors.CYAN, width=2, height=50),
+                        control2
+                    ],
+                    alignment=ft.CrossAxisAlignment.CENTER
+                )
+            ]
+        )
+    )
+
+def load_dropdowns_a():
     db = next(get_session())
     requests = db.exec(select(Request)).all()
     employees = db.exec(select(Employee)).all()
 
     request_dropdown.options = [
         ft.dropdown.Option(
-            text=f"{req.num} - {req.equipment}",
+            text=f"№{req.num} - {req.equipment}",
             key=req.num
         ) for req in requests
     ]
@@ -25,28 +95,89 @@ def get_data():
         ) for e in employees
     ]
 
-request_dropdown = ft.Dropdown(text="Выберите заявку", text_style=default_text_style,
-                               border_color=default_border_style,
-                               width=250, height=100
-)
+def add_new_employee(e):
+    if not new_employee_field.value:
+        warning_toast("Заполните поле")
+    else:
+        db = next(get_session())
+        employee_db = Employee(name=new_employee_field.value)
 
-employee_dropdown = ft.Dropdown(text="Выберите исполнителя", text_style=default_text_style,
-                                   border_color=default_border_style,
-                                   width=250, height=100
-)
+        db.add(employee_db)
+        db.commit()
 
+        new_employee_field.value = None
+        succesfull_toast("Исполнитель добавлен")
+        load_dropdowns_a()
+        
+
+#==================================================#
+#=====================CONTROLS=====================#
+#==================================================#
+
+#==================================================#
+#===============REQUEST AND EMPLOYEE===============#
+#==================================================#
+request_dropdown = ft.Dropdown(leading_icon=ft.Icons.ASSIGNMENT_ROUNDED,
+                               text="Выберите заявку", text_style=main_text_style,
+                               border_radius=10, border_color=default_border_color,
+                               width=265)
+
+employee_dropdown = ft.Dropdown(leading_icon=ft.Icons.FACE_ROUNDED,
+                                text="Выберите исполнителя", text_style=main_text_style,
+                                border_radius=10, border_color=default_border_color,
+                                width=265)
+
+request_and_employee_card = card_with_divider(ft.Icons.VIEW_LIST_ROUNDED, "Заявки и исполнители",
+                                              request_dropdown, employee_dropdown,
+                                              600, 115, 9.25)
+
+#==================================================#
+#===================NEW EMPLOYEE===================#
+#==================================================#
+new_employee_field = ft.TextField(hint_text="Напишите ФИО и нажмите Enter", text_style=main_text_style,
+                                  border_radius=10, border_color=default_border_color,
+                                  capitalization=ft.TextCapitalization.WORDS,
+                                  width=275,
+                                  on_submit=add_new_employee)
+
+new_employee_card = card(ft.Icons.PERSON_ADD_ALT_ROUNDED, "Добавить нового исполнителя",
+                         new_employee_field,
+                         325, 115, 9)
+
+#==================================================#
+#===================ASSING BUTTON==================#
+#==================================================#
+assign_employee_btn = ft.Button("Назначить", icon=ft.Icons.ASSIGNMENT_TURNED_IN_ROUNDED, style=assign_employee_btn_style,
+                                width=200, height=50,
+                                on_click=...)
+
+#==================================================#
+#=======================PAGE=======================#
+#==================================================#
 page_assign = ft.Column(
+    margin=ft.Margin.only(top=15, left=35),
     controls=[
         ft.Row(
             [
-                ft.Text("Назначение исполнителя", size=18, font_family="Comic")
+                ft.Text("Назначение исполнителя", style=page_topic_style)
             ],
             alignment=ft.CrossAxisAlignment.CENTER
-        ) ,
+        ),
         ft.Row(
             [
-                request_dropdown,
-                employee_dropdown
+                request_and_employee_card
+            ],
+            alignment=ft.CrossAxisAlignment.CENTER
+        ),
+        ft.Row(
+            [
+                new_employee_card
+            ],
+            alignment=ft.CrossAxisAlignment.CENTER
+        ),
+        ft.Row(
+            [
+                assign_employee_btn
             ],
             alignment=ft.CrossAxisAlignment.CENTER
         )

@@ -59,7 +59,7 @@ def warning_toast(text):
         ),
         duration=2000,
         behavior=ft.SnackBarBehavior.FLOATING,
-        margin=ft.Margin.only(left=500, bottom=20, right=25),
+        margin=ft.Margin.only(left=475, bottom=20, right=25),
         shape=ft.RoundedRectangleBorder(radius=15)
     )
 
