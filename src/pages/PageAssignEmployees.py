@@ -67,7 +67,7 @@ def card_with_divider(topic_icon, topic_text, control1, control2, width, height,
                 ft.Row(
                     [
                         control1,
-                        ft.Container(bgcolor=ft.Colors.CYAN, width=2, height=50),
+                        ft.Container(bgcolor=ft.Colors.CYAN, width=2, height=45),
                         control2
                     ],
                     alignment=ft.CrossAxisAlignment.CENTER
@@ -78,7 +78,7 @@ def card_with_divider(topic_icon, topic_text, control1, control2, width, height,
 
 def load_dropdowns_a():
     db = next(get_session())
-    requests = db.exec(select(Request)).all()
+    requests = db.exec(select(Request).where(Request.employee_name == None)).all()
     employees = db.exec(select(Employee)).all()
 
     request_dropdown.options = [
@@ -97,7 +97,7 @@ def load_dropdowns_a():
 
 def add_new_employee(e):
     if not new_employee_field.value:
-        warning_toast("Заполните поле")
+        warning_toast("Заполните поле", 565)
     else:
         db = next(get_session())
         employee_db = Employee(name=new_employee_field.value)
@@ -106,9 +106,34 @@ def add_new_employee(e):
         db.commit()
 
         new_employee_field.value = None
-        succesfull_toast("Исполнитель добавлен")
+        new_employee_field.hint_text="Напишите ФИО и нажмите Enter"
+
+        succesfull_toast("Исполнитель успешно добавлен", 435)
         load_dropdowns_a()
         
+def assign(e):
+    if not request_dropdown.value:
+        warning_toast("Выберите заявку", 550)
+    elif not employee_dropdown.value:
+        warning_toast("Выберите исполнителя", 500)
+    else:
+        db = next(get_session())
+        request_db = db.exec(select(Request).where(Request.num == request_dropdown.value)).one()
+        employee_db = db.exec(select(Employee).where(Employee.id == employee_dropdown.value)).one()
+
+        request_db.employee_id = employee_db.id
+        request_db.employee_name = employee_db.name
+
+        db.add(request_db)
+        db.commit()
+
+        request_dropdown.value = None      
+        employee_dropdown.value = None
+        request_dropdown.hint_text = "Выберите заявку"        
+        employee_dropdown.hint_text = "Выберите исполнителя"
+    
+        succesfull_toast("Исполнитель успешно назначен", 450)
+        load_dropdowns_a()        
 
 #==================================================#
 #=====================CONTROLS=====================#
@@ -118,18 +143,20 @@ def add_new_employee(e):
 #===============REQUEST AND EMPLOYEE===============#
 #==================================================#
 request_dropdown = ft.Dropdown(leading_icon=ft.Icons.ASSIGNMENT_ROUNDED,
-                               text="Выберите заявку", text_style=main_text_style,
+                               hint_text="Выберите заявку", hint_style=main_text_style,
+                               text_style=main_text_style,
                                border_radius=10, border_color=default_border_color,
-                               width=265)
+                               width=270)
 
 employee_dropdown = ft.Dropdown(leading_icon=ft.Icons.FACE_ROUNDED,
-                                text="Выберите исполнителя", text_style=main_text_style,
+                                hint_text="Выберите исполнителя", hint_style=main_text_style,
+                                text_style=main_text_style,
                                 border_radius=10, border_color=default_border_color,
-                                width=265)
+                                width=270)
 
 request_and_employee_card = card_with_divider(ft.Icons.VIEW_LIST_ROUNDED, "Заявки и исполнители",
                                               request_dropdown, employee_dropdown,
-                                              600, 115, 9.25)
+                                              615, 115, 9.25)
 
 #==================================================#
 #===================NEW EMPLOYEE===================#
@@ -149,7 +176,7 @@ new_employee_card = card(ft.Icons.PERSON_ADD_ALT_ROUNDED, "Добавить но
 #==================================================#
 assign_employee_btn = ft.Button("Назначить", icon=ft.Icons.ASSIGNMENT_TURNED_IN_ROUNDED, style=assign_employee_btn_style,
                                 width=200, height=50,
-                                on_click=...)
+                                on_click=assign)
 
 #==================================================#
 #=======================PAGE=======================#

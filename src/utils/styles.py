@@ -4,6 +4,7 @@ import flet as ft
 #========================TEXT======================#
 #==================================================#
 main_text_style = ft.TextStyle(size=14, font_family="Comic")
+field_label_text_style = ft.TextStyle(size=16, font_family="Comic")
 page_topic_style = ft.TextStyle(size=20, weight=ft.FontWeight.W_600, font_family="Comic")
 navigation_selected_text_style = ft.TextStyle(size=14, font_family="Comic")
 navigation_unselected_text_style = ft.TextStyle(size=12, font_family="Comic")
@@ -25,7 +26,8 @@ default_border_color = ft.Colors.with_opacity(0.1, ft.Colors.WHITE)
 #==================================================#
 #======================BUTTON======================#
 #==================================================#
-add_data_btn_style = ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=5),
+add_data_btn_style = ft.ButtonStyle(icon_size=30,
+                                    shape=ft.RoundedRectangleBorder(radius=10),
                                     color=ft.Colors.GREEN_600,
                                     text_style=ft.TextStyle(size=20,font_family="Comic"))
 assign_employee_btn_style = ft.ButtonStyle(icon_size=30,
@@ -34,5 +36,5 @@ assign_employee_btn_style = ft.ButtonStyle(icon_size=30,
                                            text_style=ft.TextStyle(size=20, font_family="Comic"))
 save_change_btn_style = ft.ButtonStyle(icon_size=30,
                                 shape=ft.RoundedRectangleBorder(radius=10),
-                                color=ft.Colors.GREEN_600,
+                                color=ft.Colors.CYAN_600,
                                 text_style=ft.TextStyle(size=20, font_family="Comic"))

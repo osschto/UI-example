@@ -74,11 +74,11 @@ def get_all_values(e):
 
 def save_data(e):
     if not request_dropdown.value:
-        warning_toast("Выберите заявку")
+        warning_toast("Выберите заявку", 550)
     elif not employee_dropdown.value:
-        warning_toast("Выберите исполнителя")
+        warning_toast("Выберите исполнителя", 500)
     elif not status_group.value:
-        warning_toast("Выберите статус")
+        warning_toast("Выберите статус", 565)
     else:
         db = next(get_session())
         request_db = db.exec(select(Request).where(Request.num == request_dropdown.value)).one()
@@ -92,7 +92,10 @@ def save_data(e):
         db.add(request_db)
         db.commit()
 
-        succesfull_toast("Изменения сохранены")
+        request_dropdown.text = "Выберите заявку"
+        employee_dropdown.hint_text = "Выберите исполнителя"
+
+        succesfull_toast("Изменения сохранены", 525)
 
 #==================================================#
 #=====================CONTROLS=====================#
@@ -153,7 +156,7 @@ description_card = card(ft.Icons.DESCRIPTION_ROUNDED, "Описание", descri
 #==================================================#
 #====================SAVE BUTTON===================#
 #==================================================#
-save_change_btn = ft.Button("Сохранить изменения", icon=ft.Icons.SAVE_AS_ROUNDED, style=save_change_btn_style,
+save_changes_btn = ft.Button("Сохранить изменения", icon=ft.Icons.SAVE_AS_ROUNDED, style=save_change_btn_style,
                      width=300, height=50,
                      on_click=save_data)
 
@@ -189,7 +192,7 @@ page_edit_requests = ft.Column(
         ),
         ft.Row(
             [
-                save_change_btn
+                save_changes_btn
             ],
             alignment=ft.CrossAxisAlignment.CENTER
         )
