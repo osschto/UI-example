@@ -2,11 +2,13 @@ import hashlib
 
 import flet as ft
 from sqlmodel import select
+
 from db.db import get_session
 from models.tables import User
 from utils.styles import (card_bgcolor, card_border_color, card_shadow_style,
-                          field_label_text_style, main_text_style, page_topic_style,
-                          default_border_color, reg_btn_style)
+                          main_text_style, page_topic_style,
+                          default_border_color, field_label_text_style,
+                          reg_btn_style)
 from utils.toast import succesfull_toast, warning_toast
 
 
@@ -58,9 +60,14 @@ def card(topic_text, control1, control2, btn, width, height):
         )
     )
 
-def navigate(e):
+def succesfull_reg():
     from utils.navigation import page_content
     from pages.PageAuthorization import auth
+    page_content.content = auth
+
+def navigate(e):
+    from pages.PageAuthorization import auth
+    from utils.navigation import page_content
     page_content.content = auth
 
 def register(e):
@@ -85,17 +92,20 @@ def register(e):
         login_field.value = None
         password_field.value = None
 
+        succesfull_reg()
         succesfull_toast("Зарегестрировано", 550)
 
 login_field = ft.TextField(label="Введите логин", label_style=field_label_text_style,
-                           text_style=main_text_style,
-                           border_color=default_border_color, border_radius=10)
+                           border_color=default_border_color, border_radius=10,
+                           text_style=main_text_style)
 password_field = ft.TextField(label="Введите пароль", label_style=field_label_text_style,
                               border_color=default_border_color, border_radius=10,
                               text_style=main_text_style,
                               password=True)
 
-reg_btn = ft.Button("Зарегестрироваться", style=reg_btn_style, on_click=register)
+reg_btn = ft.Button("Зарегестрироваться", style=reg_btn_style,
+                    width=200, height=40,
+                    on_click=register)
 
 log_and_pass_card = card("Регистрация",
                          login_field, password_field, reg_btn,

@@ -7,8 +7,9 @@ from db.db import get_session
 from models.tables import User
 from utils.navigation import page_add_requests
 from utils.styles import (card_bgcolor, card_border_color, card_shadow_style,
+                          main_text_style, page_topic_style,
                           default_border_color, field_label_text_style,
-                          main_text_style, page_topic_style, auth_btn_style)
+                          auth_btn_style)
 from utils.toast import succesfull_toast, warning_toast
 
 
@@ -70,7 +71,7 @@ def navigate(e):
     from pages.PageRegistration import reg
     page_content.content = reg
 
-def auth(e):
+def authorize(e):
     if not login_field.value:
         warning_toast("Введите логин", 575)
     elif not password_field.value:
@@ -90,14 +91,16 @@ def auth(e):
 
 
 login_field = ft.TextField(label="Введите логин", label_style=field_label_text_style,
-                           text_style=main_text_style,
-                           border_color=default_border_color, border_radius=10)
+                           border_color=default_border_color, border_radius=10,
+                           text_style=main_text_style)
 password_field = ft.TextField(label="Введите пароль", label_style=field_label_text_style,
                               border_color=default_border_color, border_radius=10,
                               text_style=main_text_style,
                               password=True)
 
-auth_btn = ft.Button("Авторизоваться", style=auth_btn_style, on_click=auth)
+auth_btn = ft.Button("Авторизоваться", style=auth_btn_style,
+                     width=200, height=40,
+                     on_click=authorize)
 
 log_and_pass_card = card("Авторизация",
                          login_field, password_field, auth_btn,
