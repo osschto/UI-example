@@ -2,11 +2,13 @@ import hashlib
 
 import flet as ft
 from sqlmodel import select
+
 from db.db import get_session
 from models.tables import User
+from utils.navigation import page_add_requests
 from utils.styles import (card_bgcolor, card_border_color, card_shadow_style,
-                          field_label_text_style, main_text_style, page_topic_style,
-                          default_border_color, reg_btn_style)
+                          default_border_color, field_label_text_style,
+                          main_text_style, page_topic_style, auth_btn_style)
 from utils.toast import succesfull_toast, warning_toast
 
 
@@ -50,7 +52,7 @@ def card(topic_text, control1, control2, btn, width, height):
                 ),
                 ft.Row(
                     [
-                        ft.Container(content=ft.Text("Войти в аккаунт", style=main_text_style), on_click=navigate)
+                        ft.Container(content=ft.Text("Создать аккаунт", style=main_text_style), on_click=navigate)
                     ],
                      alignment=ft.CrossAxisAlignment.CENTER
                 )
@@ -58,34 +60,34 @@ def card(topic_text, control1, control2, btn, width, height):
         )
     )
 
+def succesfull_auth():
+    from utils.navigation import navigation_menu, page_content
+    page_content.content = page_add_requests
+    navigation_menu.visible = True
+
 def navigate(e):
     from utils.navigation import page_content
-    from pages.PageAuthorization import auth
-    page_content.content = auth
+    from pages.PageRegistration import reg
+    page_content.content = reg
 
-def register(e):
-    db = next(get_session())
-    user_db = db.exec(select(User).where(User.log == login_field.value)).first()
-    if user_db:
-        warning_toast("Пользователь уже существует", 450)
-    elif not login_field.value:
+def auth(e):
+    if not login_field.value:
         warning_toast("Введите логин", 575)
     elif not password_field.value:
         warning_toast("Введите пароль", 575)
     else:
-        login = login_field.value
+        db = next(get_session())
+
         password = password_field.value
         hash_password = hashlib.sha256(password.encode()).hexdigest()
+        
+        user_db = db.exec(select(User).where(User.pas == hash_password)).first()
+        if user_db:
+            succesfull_auth()
+            succesfull_toast("Успешный вход", 550)
+        else:
+            warning_toast("Неверный логин или пароль", 450)
 
-        user_db = User(log=login, pas=hash_password)
-
-        db.add(user_db)
-        db.commit()
-
-        login_field.value = None
-        password_field.value = None
-
-        succesfull_toast("Зарегестрировано", 550)
 
 login_field = ft.TextField(label="Введите логин", label_style=field_label_text_style,
                            text_style=main_text_style,
@@ -95,13 +97,13 @@ password_field = ft.TextField(label="Введите пароль", label_style=f
                               text_style=main_text_style,
                               password=True)
 
-reg_btn = ft.Button("Зарегестрироваться", style=reg_btn_style, on_click=register)
+auth_btn = ft.Button("Авторизоваться", style=auth_btn_style, on_click=auth)
 
-log_and_pass_card = card("Регистрация",
-                         login_field, password_field, reg_btn,
+log_and_pass_card = card("Авторизация",
+                         login_field, password_field, auth_btn,
                          350, 275)
 
-reg = ft.Column(
+auth = ft.Column(
     margin=ft.Margin.only(top=90),
     controls=[
         ft.Row(

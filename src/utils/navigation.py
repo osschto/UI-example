@@ -4,7 +4,7 @@ from pages.PageAddRequests import get_last_num, page_add_requests
 from pages.PageAssignEmployees import load_dropdowns_a, page_assign
 from pages.PageEditRequests import load_dropdowns_e, page_edit_requests
 from pages.PageRegistration import reg
-from pages.PageLogin import log
+from pages.PageAuthorization import auth
 
 #==================================================#
 #====================FUNCTIONS=====================#
@@ -22,7 +22,7 @@ def navigate(e):
 #==================================================#
 #==============MENU AND PAGE CONTENT===============#
 #==================================================#
-page_content = ft.Container(content=log)
+page_content = ft.Container(content=auth)
 
 navigation_menu = ft.Container(
     margin=ft.Margin.only(top=7),

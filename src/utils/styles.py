@@ -35,6 +35,14 @@ assign_employee_btn_style = ft.ButtonStyle(icon_size=30,
                                            color=ft.Colors.ORANGE_ACCENT_400,
                                            text_style=ft.TextStyle(size=20, font_family="Comic"))
 save_change_btn_style = ft.ButtonStyle(icon_size=30,
-                                shape=ft.RoundedRectangleBorder(radius=10),
-                                color=ft.Colors.CYAN_600,
-                                text_style=ft.TextStyle(size=20, font_family="Comic"))
+                                       shape=ft.RoundedRectangleBorder(radius=10),
+                                       color=ft.Colors.CYAN_600,
+                                       text_style=ft.TextStyle(size=20, font_family="Comic"))
+reg_btn_style = ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10),
+                               bgcolor=ft.Colors.with_opacity(0.06, color=ft.Colors.WHITE),
+                               color=ft.Colors.WHITE,
+                               text_style=ft.TextStyle(size=16, font_family="Comic"))
+auth_btn_style = ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10),
+                               bgcolor=ft.Colors.with_opacity(0.06, color=ft.Colors.WHITE),
+                               color=ft.Colors.WHITE,
+                               text_style=ft.TextStyle(size=16, font_family="Comic"))

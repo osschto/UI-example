@@ -9,7 +9,7 @@ async def main(page: ft.Page):
     page.title = "TASK"
     page.fonts = {"Comic" : "fonts/comic.ttf"}
     page.window.icon = "images/icon.ico"
-    page.window.always_on_top = True
+    page.window.always_on_top = True    #develop
     page.window.resizable = False
     page.window.maximizable = False
     page.window.width = 800
@@ -19,7 +19,7 @@ async def main(page: ft.Page):
 
     set_page(page)
 
-    await page.window.center()
+    # await page.window.center()    #develop
 
     page.add(
         ft.Stack(
