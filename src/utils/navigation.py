@@ -1,10 +1,11 @@
 import flet as ft
-from utils.styles import navigation_selected_text_style, navigation_unselected_text_style, page_topic_style
+
 from pages.PageAddRequests import get_last_num, page_add_requests
 from pages.PageAssignEmployees import load_dropdowns_a, page_assign
+from pages.PageAuthorization import page_auth
 from pages.PageEditRequests import load_dropdowns_e, page_edit_requests
-from pages.PageRegistration import reg
-from pages.PageAuthorization import auth
+from utils.styles import navigation_selected_text_style, navigation_unselected_text_style, page_topic_style
+
 
 #==================================================#
 #====================FUNCTIONS=====================#
@@ -22,7 +23,11 @@ def navigate(e):
 #==================================================#
 #==============MENU AND PAGE CONTENT===============#
 #==================================================#
-page_content = ft.Container(content=auth)
+page_content = ft.Container(content=page_auth)
+
+add_destination = ft.NavigationRailDestination(icon=ft.Icons.HOME, label="Добавить")
+edit_destination = ft.NavigationRailDestination(icon=ft.Icons.EDIT, label="Изменить")
+assign_destination = ft.NavigationRailDestination(icon=ft.Icons.ADD, label="Назначить")
 
 navigation_menu = ft.Container(
     margin=ft.Margin.only(top=7),
@@ -32,13 +37,13 @@ navigation_menu = ft.Container(
         unselected_label_text_style=navigation_unselected_text_style,
         selected_label_text_style=navigation_selected_text_style,
         margin=ft.Margin.only(left=0),
-        height=200,
+        height=230,
         on_change=navigate,
         leading=ft.Text("Меню", style=page_topic_style),
         destinations=[
-            ft.NavigationRailDestination(icon=ft.Icons.HOME, label="Добавить"),
-            ft.NavigationRailDestination(icon=ft.Icons.EDIT, label="Изменить"),
-            ft.NavigationRailDestination(icon=ft.Icons.ADD, label="Назначить")
+            add_destination,
+            edit_destination,
+            assign_destination
         ]
     )
 )

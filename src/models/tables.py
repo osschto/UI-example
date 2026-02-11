@@ -24,6 +24,6 @@ class Employee(SQLModel, table=True):
 
 class User(SQLModel, table=True):
     id : Optional[int] = Field(default=None, primary_key=True)
-    log : str
-    pas : str
+    login : str
+    password : str
     role : Optional[str] = "user"

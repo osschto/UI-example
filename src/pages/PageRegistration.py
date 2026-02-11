@@ -62,19 +62,24 @@ def card(topic_text, control1, control2, btn, width, height):
 
 def succesfull_reg():
     from utils.navigation import page_content
-    from pages.PageAuthorization import auth
-    page_content.content = auth
+    from pages.PageAuthorization import page_auth
+    page_content.content = page_auth
 
 def navigate(e):
-    from pages.PageAuthorization import auth
+    from pages.PageAuthorization import page_auth
     from utils.navigation import page_content
-    page_content.content = auth
+
+    login_field.value = None
+    password_field.value = None
+
+    page_content.content = page_auth
 
 def register(e):
     db = next(get_session())
-    user_db = db.exec(select(User).where(User.log == login_field.value)).first()
+    user_db = db.exec(select(User).where(User.login == login_field.value)).first()
+
     if user_db:
-        warning_toast("Пользователь уже существует", 450)
+        warning_toast("Пользователь с таким логином уже существует", 325)
     elif not login_field.value:
         warning_toast("Введите логин", 575)
     elif not password_field.value:
@@ -84,7 +89,7 @@ def register(e):
         password = password_field.value
         hash_password = hashlib.sha256(password.encode()).hexdigest()
 
-        user_db = User(log=login, pas=hash_password)
+        user_db = User(login=login, password=hash_password)
 
         db.add(user_db)
         db.commit()
@@ -111,8 +116,8 @@ log_and_pass_card = card("Регистрация",
                          login_field, password_field, reg_btn,
                          350, 275)
 
-reg = ft.Column(
-    margin=ft.Margin.only(top=90),
+page_reg = ft.Column(
+    margin=ft.Margin.only(top=125),
     controls=[
         ft.Row(
             [

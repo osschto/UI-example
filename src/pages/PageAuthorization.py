@@ -62,14 +62,28 @@ def card(topic_text, control1, control2, btn, width, height):
     )
 
 def succesfull_auth():
-    from utils.navigation import navigation_menu, page_content
+    from utils.navigation import navigation_menu, page_content, edit_destination, assign_destination
+
+    db = next(get_session())
+    user_db = db.exec(select(User).where(User.login == login_field.value)).one()
+    
+    if user_db.role == "user":
+        navigation_menu.visible = True
+        edit_destination.disabled = True
+        assign_destination.disabled = True
+    else:
+        navigation_menu.visible = True
     page_content.content = page_add_requests
-    navigation_menu.visible = True
+    
 
 def navigate(e):
     from utils.navigation import page_content
-    from pages.PageRegistration import reg
-    page_content.content = reg
+    from pages.PageRegistration import page_reg
+
+    login_field.value = None
+    password_field.value = None
+
+    page_content.content = page_reg
 
 def authorize(e):
     if not login_field.value:
@@ -79,10 +93,12 @@ def authorize(e):
     else:
         db = next(get_session())
 
+        login = login_field.value
         password = password_field.value
         hash_password = hashlib.sha256(password.encode()).hexdigest()
         
-        user_db = db.exec(select(User).where(User.pas == hash_password)).first()
+        user_db = db.exec(select(User).where((User.login == login)&(User.password == hash_password))).first()
+
         if user_db:
             succesfull_auth()
             succesfull_toast("Успешный вход", 550)
@@ -106,8 +122,8 @@ log_and_pass_card = card("Авторизация",
                          login_field, password_field, auth_btn,
                          350, 275)
 
-auth = ft.Column(
-    margin=ft.Margin.only(top=90),
+page_auth = ft.Column(
+    margin=ft.Margin.only(top=125),
     controls=[
         ft.Row(
             [
