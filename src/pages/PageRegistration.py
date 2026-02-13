@@ -11,7 +11,9 @@ from utils.styles import (card_bgcolor, card_border_color, card_shadow_style,
                           reg_btn_style)
 from utils.toast import succesfull_toast, warning_toast
 
-
+#==================================================#
+#====================FUNCTIONS=====================#
+#==================================================#
 def card(topic_text, control1, control2, btn, width, height):
     return ft.Container(
         width=width,
@@ -100,6 +102,9 @@ def register(e):
         succesfull_reg()
         succesfull_toast("Зарегестрировано", 550)
 
+#==================================================#
+#=====================CONTROLS=====================#
+#==================================================#
 login_field = ft.TextField(label="Введите логин", label_style=field_label_text_style,
                            border_color=default_border_color, border_radius=10,
                            text_style=main_text_style)
@@ -116,6 +121,9 @@ log_and_pass_card = card("Регистрация",
                          login_field, password_field, reg_btn,
                          350, 275)
 
+#==================================================#
+#=======================PAGE=======================#
+#==================================================#
 page_reg = ft.Column(
     margin=ft.Margin.only(top=125),
     controls=[

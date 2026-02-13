@@ -125,7 +125,7 @@ def save_data(e):
         type_field.value = None
         description_field.value = None
         client_field.value = None
-        status_group.value = None
+        status_group.value = "awaiting"
 
         succesfull_toast("Заявка успешно добавлена", 475)
         get_last_num()

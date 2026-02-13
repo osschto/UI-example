@@ -66,7 +66,10 @@ def load_dropdowns_e():
 
 def get_all_values(e):
     db = next(get_session()) 
-    request_db = db.exec(select(Request).where(Request.num == request_dropdown.value)).one()
+    request_db = db.exec(select(Request).where(Request.num == request_dropdown.value)).first()
+
+    if not request_db.employee_id:
+        employee_dropdown.hint_text = "Исполнитель не назначен"
 
     status_group.value = request_db.status
     description_field.value = request_db.description
@@ -81,8 +84,8 @@ def save_data(e):
         warning_toast("Выберите статус", 565)
     else:
         db = next(get_session())
-        request_db = db.exec(select(Request).where(Request.num == request_dropdown.value)).one()
-        employee_db = db.exec(select(Employee).where(Employee.id == employee_dropdown.value)).one()
+        request_db = db.exec(select(Request).where(Request.num == request_dropdown.value)).first()
+        employee_db = db.exec(select(Employee).where(Employee.id == employee_dropdown.value)).first()
 
         request_db.status = status_group.value
         request_db.employee_id = employee_db.id
@@ -93,7 +96,7 @@ def save_data(e):
         db.commit()
 
         request_dropdown.text = "Выберите заявку"
-        employee_dropdown.hint_text = "Выберите исполнителя"
+        employee_dropdown.text = "Выберите исполнителя"
 
         succesfull_toast("Изменения сохранены", 525)
 
@@ -107,10 +110,10 @@ def save_data(e):
 request_dropdown = ft.Dropdown(leading_icon=ft.Icons.ASSIGNMENT_ROUNDED,
                                text="Выберите заявку", text_style=main_text_style,
                                border_radius=10, border_color=default_border_color,
-                               width=300,
+                               width=310,
                                on_text_change=get_all_values)
 
-request_card = card(ft.Icons.LIST_ALT_ROUNDED, "Заявка", request_dropdown, 365, 115, 12)
+request_card = card(ft.Icons.LIST_ALT_ROUNDED, "Заявка", request_dropdown, 375, 115, 12)
 
 #==================================================#
 #=====================EMPLOYEE=====================#
@@ -118,9 +121,9 @@ request_card = card(ft.Icons.LIST_ALT_ROUNDED, "Заявка", request_dropdown,
 employee_dropdown = ft.Dropdown(leading_icon=ft.Icons.FACE_ROUNDED,
                                text="Выберите исполнителя", text_style=main_text_style,
                                border_radius=10, border_color=default_border_color,
-                               width=275)
+                               width=285)
 
-employee_card = card(ft.Icons.PERSON_ROUNDED, "Исполнитель", employee_dropdown, 335, 130, 11)
+employee_card = card(ft.Icons.PERSON_ROUNDED, "Исполнитель", employee_dropdown, 345, 130, 11)
 
 #==================================================#
 #======================STATUS======================#
@@ -151,7 +154,7 @@ description_field = ft.TextField(hint_text="Можно оставить это �
                                  multiline=True, min_lines=3, max_lines=3,
                                  width=475)
 
-description_card = card(ft.Icons.DESCRIPTION_ROUNDED, "Описание", description_field, 530, 155, 12)
+description_card = card(ft.Icons.DESCRIPTION_ROUNDED, "Описание", description_field, 540, 155, 12)
 
 #==================================================#
 #====================SAVE BUTTON===================#

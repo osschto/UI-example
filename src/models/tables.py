@@ -5,15 +5,15 @@ from sqlmodel import Field, Relationship, SQLModel
 
 class Request(SQLModel, table=True):
     num : Optional[int] = Field(default=None, primary_key=True)
-    employee_id : Optional[int] = Field(foreign_key="employee.id")
     date : date
     equipment : str
     type : str
-    description : str
+    description : Optional[str] = None
     client : str
     employee_name : Optional[str] = None
     status : str
 
+    employee_id : Optional[int] = Field(foreign_key="employee.id")
     employee : Optional["Employee"] = Relationship(back_populates="requests")
 
 class Employee(SQLModel, table=True):

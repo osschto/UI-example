@@ -118,8 +118,8 @@ def assign(e):
         warning_toast("Выберите исполнителя", 500)
     else:
         db = next(get_session())
-        request_db = db.exec(select(Request).where(Request.num == request_dropdown.value)).one()
-        employee_db = db.exec(select(Employee).where(Employee.id == employee_dropdown.value)).one()
+        request_db = db.exec(select(Request).where(Request.num == request_dropdown.value)).first()
+        employee_db = db.exec(select(Employee).where(Employee.id == employee_dropdown.value)).first()
 
         request_db.employee_id = employee_db.id
         request_db.employee_name = employee_db.name

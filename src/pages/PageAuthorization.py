@@ -12,7 +12,9 @@ from utils.styles import (card_bgcolor, card_border_color, card_shadow_style,
                           auth_btn_style)
 from utils.toast import succesfull_toast, warning_toast
 
-
+#==================================================#
+#====================FUNCTIONS=====================#
+#==================================================#
 def card(topic_text, control1, control2, btn, width, height):
     return ft.Container(
         width=width,
@@ -65,7 +67,7 @@ def succesfull_auth():
     from utils.navigation import navigation_menu, page_content, edit_destination, assign_destination
 
     db = next(get_session())
-    user_db = db.exec(select(User).where(User.login == login_field.value)).one()
+    user_db = db.exec(select(User).where(User.login == login_field.value)).first()
     
     if user_db.role == "user":
         navigation_menu.visible = True
@@ -73,8 +75,12 @@ def succesfull_auth():
         assign_destination.disabled = True
     else:
         navigation_menu.visible = True
+        edit_destination.disabled = False
+        assign_destination.disabled = False
     page_content.content = page_add_requests
-    
+
+    login_field.value = None
+    password_field.value = None
 
 def navigate(e):
     from utils.navigation import page_content
@@ -105,7 +111,9 @@ def authorize(e):
         else:
             warning_toast("Неверный логин или пароль", 450)
 
-
+#==================================================#
+#=====================CONTROLS=====================#
+#==================================================#
 login_field = ft.TextField(label="Введите логин", label_style=field_label_text_style,
                            border_color=default_border_color, border_radius=10,
                            text_style=main_text_style)
@@ -122,6 +130,9 @@ log_and_pass_card = card("Авторизация",
                          login_field, password_field, auth_btn,
                          350, 275)
 
+#==================================================#
+#=======================PAGE=======================#
+#==================================================#
 page_auth = ft.Column(
     margin=ft.Margin.only(top=125),
     controls=[

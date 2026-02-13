@@ -4,6 +4,7 @@ from pages.PageAddRequests import get_last_num, page_add_requests
 from pages.PageAssignEmployees import load_dropdowns_a, page_assign
 from pages.PageAuthorization import page_auth
 from pages.PageEditRequests import load_dropdowns_e, page_edit_requests
+from pages.PageSearch import page_search
 from utils.styles import navigation_selected_text_style, navigation_unselected_text_style, page_topic_style
 
 
@@ -20,10 +21,14 @@ def navigate(e):
         page_content.content = page_assign
         load_dropdowns_a()
 
+def logout(e):
+    page_content.content = page_auth
+    navigation_menu.visible = False
+
 #==================================================#
 #==============MENU AND PAGE CONTENT===============#
 #==================================================#
-page_content = ft.Container(content=page_auth)
+page_content = ft.Container(content=page_search)
 
 add_destination = ft.NavigationRailDestination(icon=ft.Icons.HOME, label="Добавить")
 edit_destination = ft.NavigationRailDestination(icon=ft.Icons.EDIT, label="Изменить")
@@ -37,9 +42,10 @@ navigation_menu = ft.Container(
         unselected_label_text_style=navigation_unselected_text_style,
         selected_label_text_style=navigation_selected_text_style,
         margin=ft.Margin.only(left=0),
-        height=230,
+        height=550,
         on_change=navigate,
         leading=ft.Text("Меню", style=page_topic_style),
+        trailing=ft.IconButton(icon=ft.Icons.LOGOUT, icon_size=28, margin=ft.Margin.only(left=10, top=250), on_click=logout),
         destinations=[
             add_destination,
             edit_destination,
